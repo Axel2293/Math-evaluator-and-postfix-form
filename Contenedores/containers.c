@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "containers.h"
 
 // ========================== STACK
@@ -7,7 +8,7 @@
 struct nodeSTK
 {
     DATA data;
-    struct node *prior;
+    struct nodeSTK *prior;
 
 };
     //POinter to node of stack
@@ -159,7 +160,7 @@ void print_stack(Stack stk)
 struct nodeQE
 {
     DATA data;
-    NodePQ next;
+    struct nodeQE *next;
 };
 
     //Pointer to node o queue

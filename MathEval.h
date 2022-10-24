@@ -1,11 +1,19 @@
 #ifndef _MATHEVAL_H_
 #define _MATHEVAL_H_
 
-#include "Contenedores/containers.h"
-#include <stdlib.h>
-#include <stdio.h>
+#include <stdbool.h>
+
+// Main expresión
+typedef char * EXP;
+
+bool parenthesisBalance(EXP expresion);
+bool invalidCharacters(EXP expresion);
+bool operandsBalance(EXP expresion);
 
 
 
 
-#endif /*_MATHEVAL_H_*/
+
+
+
+#endif /* _MATHEVAL_H_ */
