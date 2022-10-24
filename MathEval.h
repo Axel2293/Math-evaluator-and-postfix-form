@@ -10,6 +10,8 @@ bool parenthesisBalance(EXP expresion);
 bool invalidCharacters(EXP expresion);
 bool operandsBalance(EXP expresion);
 
+//Conversion
+void infToPost(EXP expresion);
 
 
 

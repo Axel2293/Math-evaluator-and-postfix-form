@@ -92,3 +92,15 @@ bool operandsBalance(EXP expresion)
 {
     printf("HELLO");
 }
+
+
+
+
+
+//Conversion de Infijo a Postfijo
+void infToPost(EXP expresion){
+    Stack stk = stack_create();
+
+    //Algoritmo para la conversion
+
+}
