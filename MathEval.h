@@ -3,16 +3,18 @@
 
 #include <stdbool.h>
 
-// Main expresión
+// Math expresion
 typedef char * EXP;
+typedef double * EVAL;
 
+
+EXP cleanSpaces(EXP);
 bool parenthesisBalance(EXP expresion);
 bool invalidCharacters(EXP expresion);
 bool operandsBalance(EXP expresion);
 
-//Conversion
-void infToPost(EXP expresion);
-
+EXP postFix(EXP);
+EVAL postfixEval(EXP);
 
 
 
