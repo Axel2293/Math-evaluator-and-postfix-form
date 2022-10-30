@@ -129,30 +129,6 @@ void stack_destroy(Stack stk)
     free(stk);
 }
 
-void print_stack(Stack stk)
-{
-    printf("Size: %d\n", stk->size);
-    printf("Top[0]:  %p\n", stk->top);
-    if(stk->top!=NULL)
-    {
-        printf("\tData: %p\n", stk->top->data);
-
-    }
-
-        
-    if(stk->top!=NULL)
-    {
-        if(stk->top->prior!=NULL){
-            NodePS next=stk->top->prior;
-            for(int i=1; i<=stk->size-1; i++)
-            {
-                printf("Node[%d]: %p\n",i,next);
-                printf("\t Data: %p\n", next->data);
-                next=next->prior;
-            }
-        }
-    }
-}
 
 
 // ======================== QUEUE
@@ -167,7 +143,7 @@ struct nodeQE
 typedef struct nodeQE * NodePQ;
 
     //CONTAINER QUEUE THAT LINKS START AND END
-struct Queue
+struct queue
 {
     NodePQ first;
     NodePQ last;
@@ -179,9 +155,9 @@ struct Queue
 
 
 
-QueueP queueCreate(size_t bytes)
+Queue queueCreate(size_t bytes)
 {
-    QueueP new=malloc(sizeof(struct Queue));
+    Queue new=malloc(sizeof(struct queue));
     new->first=NULL;
     new->last=NULL;
     new->size_data=bytes;
@@ -189,7 +165,7 @@ QueueP queueCreate(size_t bytes)
     return new;
 }
 
-int queueSize(QueueP q1)
+int queueSize(Queue q1)
 {
     if(q1!=NULL)
     {
@@ -197,24 +173,28 @@ int queueSize(QueueP q1)
     }
     else
     {
-        return -1;
+        return 0;
     }
 }
 
-bool queueEmpty(QueueP q1)
+bool queueEmpty(Queue q1)
 {
-    if(q1!=NULL && q1->size==0)
+    if(q1!=NULL)
     {
-        return true;
-    }
-    else if(q1!=NULL && q1->size!=0)
-    {
-        return false;
+        if(q1->size==0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     else
     {
         return true;
     }
+
 }
 
 NodePQ newNodeP(DATA data, size_t bytes)
@@ -228,7 +208,7 @@ NodePQ newNodeP(DATA data, size_t bytes)
     return new;
 }
 
-void enqueue(QueueP q, DATA data)
+void enqueue(Queue q, DATA data)
 {
     if(q!=NULL)
     {
@@ -251,7 +231,7 @@ void enqueue(QueueP q, DATA data)
     }
 }
 
-DATA peek(QueueP q)
+DATA peek(Queue q)
 {
     if(q!=NULL && queueEmpty(q))
     {
@@ -263,7 +243,7 @@ DATA peek(QueueP q)
     }
 }
 
-DATA dequeue(QueueP q)
+DATA dequeue(Queue q)
 {
     if(q!=NULL && queueEmpty(q))
     {
@@ -287,7 +267,7 @@ DATA dequeue(QueueP q)
     }
 }
 
-void queueDestroy(QueueP q)
+void queueDestroy(Queue q)
 {
     if(q!=NULL)
     {

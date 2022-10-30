@@ -23,22 +23,22 @@ void print_stack(Stack);
 
 // =========================== QUEUE
     // Pointer to the queue container
-typedef struct Queue * QueueP;
+typedef struct queue * Queue;
 
 //Create the queue container
-QueueP queueCreate(size_t);
+Queue queueCreate(size_t);
 //Returns the size_t of the queue
-int queueSize(QueueP);
+int queueSize(Queue);
 //Returns true or false depending if the queue is empty
-bool queueEmpty(QueueP);
+bool queueEmpty(Queue);
 //Destroys the que and all the data in it
-void queueDestroy(QueueP);
+void queueDestroy(Queue);
 //Adds an element to the end of the queue list
-void enqueue(QueueP, DATA);
+void enqueue(Queue, DATA);
 //Returns and removes the first element in the queue
-DATA dequeue(QueueP);
+DATA dequeue(Queue);
 //Consult the first element of the list
-DATA peek(QueueP);
+DATA peek(Queue);
 
 
 #endif /*_CONTAINERS_H_*/

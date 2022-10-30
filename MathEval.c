@@ -163,38 +163,38 @@ bool operandsBalance(EXP expresion)
 EXP postFix(EXP expresion)
 {
     Stack stk=stack_create();
+    Queue qe=queueCreate(sizeof(char)); 
     EXP result=calloc(1000, sizeof(char));
 
     int i=0, newPos=0;
     while(expresion[i]!='\0')
-    {
-        //printf("\n[%d]\n", i);
-        
-        //Search for operand (1,2,3,4,5,6,7,8,9) and output it
+    {   
+        //Search for operand (1,2,3,4,5,6,7,8,9) and output it on the queue
         if(expresion[i]>='0' && expresion[i]<='9')
         {
-            //printf("Operand Found: ");
-            //printf("%c",expresion[i]);
+
+            enqueue(qe, charCreate(expresion[i]));
             result[newPos]=expresion[i];
             newPos++;
             
         }
+        //Add ( to stack
         else if(expresion[i]=='(')
         {
             stack_push(stk, (DATA) charCreate(expresion[i]));
         }
+        // operators of low dominance
         else if(expresion[i]=='+' || expresion[i]=='-')
         {
-            //printf("\nOperator found[+,-]\n");
             EXP dt= (EXP) stack_top(stk);
             if(dt!=NULL){
                 if(*dt=='*' || *dt=='/')
                 {
-                    //printf("Found more high opt: \n");
-                    dt=stack_pop(stk);
-                    //printf("%c", *dt);
+                    dt= (EXP) stack_pop(stk);
+                    enqueue(qe, charCreate(*dt));
                     result[newPos]=*dt;
                     newPos++;
+
                     while (*dt != '(')
                     {
                         dt= (EXP) stack_top(stk);
@@ -207,10 +207,9 @@ EXP postFix(EXP expresion)
                             else
                             {
                                 dt=stack_pop(stk);
-                                //printf("%c", *dt);
+                                enqueue(qe, charCreate(*dt));
                                 result[newPos]=*dt;
                                 newPos++;
-
                             }
                         }
                         else
@@ -236,28 +235,25 @@ EXP postFix(EXP expresion)
         }
         else if(expresion[i]=='*' || expresion[i]=='/')
         {
-            //printf("\nOperator found[/,*]\n");
             EXP dt=(EXP) stack_top(stk);
             if(dt!=NULL){
+                //Same level so swap
                 if (*dt=='*' || *dt=='/')
                 {
-                    //printf("Same level opt found, swaping\n");
                     stack_pop(stk);
+                    enqueue(qe, charCreate(*dt));
                     result[newPos]=*dt;
                     newPos++;
                     stack_push(stk, charCreate(expresion[i]));
                 }
                 else
                 {
-                    //printf("Adding opt to stack [%c]\n", expresion[i]);
                     stack_push(stk, (DATA) charCreate(expresion[i]));
                 }
             }
             else
             {
-                //printf("Adding opt to stack [%c]\n", expresion[i]);
                 stack_push(stk, (DATA) charCreate(expresion[i]));
-                //print_stack(stk);
             }
         }
         else if (expresion[i]==')')
@@ -269,16 +265,14 @@ EXP postFix(EXP expresion)
                 if(*dt == '(')
                 {
                     dt=stack_pop(stk);
-                    //print_stack(stk);
                     break;
                 }
                 else
                 {
                     dt=(EXP) stack_pop(stk);
-                    //printf("%c\n", *dt);
+                    enqueue(qe, charCreate(*dt));
                     result[newPos]=*dt;
                     newPos++;
-                    //print_stack(stk);
                 }
             }
             
@@ -286,19 +280,22 @@ EXP postFix(EXP expresion)
         else
         {
             EXP c=charCreate(expresion[i]);
+            enqueue(qe, c);
             result[newPos]=*c;
             newPos++;
         }
         i++;
     }
 
+    //add remaining characters in the stack to the queue
     EXP res=NULL;
     while (stack_isEmpty(stk)==false)
     {
-        res=stack_pop(stk);
+        res= (EXP) stack_pop(stk);
         if(*res!='(')
         {
             //printf("%c", *res);
+            enqueue(qe, charCreate(*res));
             result[newPos]=*res;
             newPos++;
         }
@@ -356,4 +353,9 @@ EVAL postfixEval(EXP postfix)
         i++;
     }
     return (double *)stack_pop(stk);
+}
+
+EXP posfixCreate(Queue q1)
+{
+
 }
