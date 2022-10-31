@@ -6,5 +6,14 @@ int main()
 {
     system("clear");
 
-    matheval();
+    EXP postfix=postFix();
+    
+    if (postfix!=NULL)
+    {
+        printf("\tPostfijo [%s]\n", postfix);
+        EVAL result=postfixEval(postfix);
+        printf("\tEvaluación: [%f]\n", *result);
+    }
+
+    return 0;
 }

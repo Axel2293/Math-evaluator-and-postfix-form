@@ -6,7 +6,8 @@ typedef char * EXP;
 typedef double * EVAL;
 
 //Converts a infix expresion to postfix using Shunting Yard Algorithm, stack and queue, also evaluates the expresion using stack
-void matheval();
+EXP postFix();
+EVAL postfixEval(EXP);
 
 
 

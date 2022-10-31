@@ -7,7 +7,7 @@
 #include <stdbool.h>
 
 EXP posfixCreate(Queue);
-EXP postFixV2(EXP);
+EXP postFix();
 EVAL postfixEval(EXP);
 EXP spacesBalance(EXP);
 EXP scanInput();
@@ -16,36 +16,7 @@ bool invalidCharacters(EXP );
 bool operandsBalance(EXP );
 bool operatorsBalance(EXP);
 
-void matheval()
-{
-    system("clear");
-    //char exp[6]= "1 + 1";
-    printf("  __  __       _   _       ______          _             _             \n"
-            " |  \\/  |     | | | |     |  ____|        | |           | |\n"            
-            " | \\  / | __ _| |_| |__   | |____   ____ _| |_   _  __ _| |_ ___  _ __\n" 
-            " | |\\/| |/ _` | __| '_ \\  |  __\\ \\ / / _` | | | | |/ _` | __/ _ \\| '__|\n"
-            " | |  | | (_| | |_| | | | | |___\\ V / (_| | | |_| | (_| | || (_) | |\n"
-            " |_|  |_|\\__,_|\\__|_| |_| |______\\_/ \\__,_|_|\\__,_|\\__,_|\\__\\___/|_|\n");
-    printf("Ten en cuenta:\n\t-Balance de parentesis ('()' o '[]')\n\t-Balance de operadores (+,-,*,/)\n\t-Balance de operandos (Numeros enteros reales)\n");
 
-    char *exp=scanInput();
-
-    if(parenthesisBalance(exp) && invalidCharacters(exp) && operandsBalance(exp) && operatorsBalance(exp))
-    {
-        //Add spaces efter and before operands to make sure we can idenify the numbers on posfix
-        printf("\tInfijo: [ %s]\n", exp);
-        EXP new=spacesBalance(exp);
-
-        //Expresión converted now to posfix form
-        EXP postfix=postFixV2(new);
-        printf("\tPosfijo: [%s]\n", postfix);
-        //Evaluate
-        EVAL eval=postfixEval(postfix);
-        printf("Evaluación: %f\n", *eval);
-    }
-
-
-}
 
 //Scans the input of the user as a str
 EXP scanInput()
@@ -64,7 +35,6 @@ EXP scanInput()
         }
         
     }
-
     return inpt;
 }
 
@@ -100,6 +70,7 @@ bool parenthesisBalance(EXP expresion)
         {
             if (stack_pop(stk) == NULL)
             {
+                printf("\nParéntesis no balanceados, expresion incorrecta\n");
                 return false;
             }
         }
@@ -112,6 +83,7 @@ bool parenthesisBalance(EXP expresion)
     }
     else
     {
+        printf("\nParéntesis no balanceados, expresion incorrecta\n");
         return false;
     }
 
@@ -281,8 +253,30 @@ short operatorDominance(char opt)
     }
 }
 
-EXP postFixV2(EXP expresion)
+EXP postFix()
 {
+
+    system("clear");
+    printf("  __  __       _   _       ______          _             _             \n"
+            " |  \\/  |     | | | |     |  ____|        | |           | |\n"            
+            " | \\  / | __ _| |_| |__   | |____   ____ _| |_   _  __ _| |_ ___  _ __\n" 
+            " | |\\/| |/ _` | __| '_ \\  |  __\\ \\ / / _` | | | | |/ _` | __/ _ \\| '__|\n"
+            " | |  | | (_| | |_| | | | | |___\\ V / (_| | | |_| | (_| | || (_) | |\n"
+            " |_|  |_|\\__,_|\\__|_| |_| |______\\_/ \\__,_|_|\\__,_|\\__,_|\\__\\___/|_|\n");
+    printf("Ten en cuenta:\n\t-Balance de parentesis ('()' o '[]')\n\t-Balance de operadores (+,-,*,/)\n\t-Balance de operandos (Numeros enteros)\n");
+
+    EXP exp=scanInput();
+
+    if (!parenthesisBalance(exp) || !invalidCharacters(exp) || !operandsBalance(exp) || !operatorsBalance(exp))
+    {
+        return NULL;
+    }
+    
+    EXP expresion=spacesBalance(exp);
+    
+
+
+
     Stack stk=stack_create();
     Queue qe=queueCreate(sizeof(char)); 
     EXP result=calloc(1000, sizeof(char));
@@ -378,7 +372,6 @@ EVAL postfixEval(EXP postfix)
 {
     int i=0;
     Stack stk=stack_create();
-    //Gracias a GeeksForGeeks, estabamos perdidisimos en esto y su explicacion nos ayudo a entender el como crear el numero de mas de un digito
     while (postfix[i]!='\0')
     {
         if(isdigit(postfix[i]))
@@ -399,6 +392,7 @@ EVAL postfixEval(EXP postfix)
             temp[index+1]='\0';
             //Atoi takes a string of digits and turns it into a usable number
             number=atoi(temp);
+            
             stack_push(stk, doubleCreate(number));
         }
         else if(postfix[i]== '+' || postfix[i]== '-' || postfix[i]== '*' || postfix[i]== '/')
