@@ -1,0 +1,8 @@
+for the object files of the tda
+
+gcc -c MathEval.c Contenedores/containers.c
+    - This wil generate the two .o files (MathEval.o and containers.o)
+
+Generate the main using the MathEval TDA
+
+gcc main.c MathEval.o containers.o -o test.exe

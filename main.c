@@ -4,7 +4,7 @@
 
 int main()
 {
-    char *exp={"(2+(3*4))"};
+    system("clear");
 
-    printf("%s", exp);
+    matheval();
 }

@@ -4,73 +4,71 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
 
-int main(void)
+EXP posfixCreate(Queue);
+EXP postFixV2(EXP);
+EVAL postfixEval(EXP);
+EXP spacesBalance(EXP);
+EXP scanInput();
+bool parenthesisBalance(EXP );
+bool invalidCharacters(EXP );
+bool operandsBalance(EXP );
+bool operatorsBalance(EXP);
+
+void matheval()
 {
     system("clear");
-    char *exp={"2 + 3 * 5 / 2 - 1"};
+    //char exp[6]= "1 + 1";
+    printf("  __  __       _   _       ______          _             _             \n"
+            " |  \\/  |     | | | |     |  ____|        | |           | |\n"            
+            " | \\  / | __ _| |_| |__   | |____   ____ _| |_   _  __ _| |_ ___  _ __\n" 
+            " | |\\/| |/ _` | __| '_ \\  |  __\\ \\ / / _` | | | | |/ _` | __/ _ \\| '__|\n"
+            " | |  | | (_| | |_| | | | | |___\\ V / (_| | | |_| | (_| | || (_) | |\n"
+            " |_|  |_|\\__,_|\\__|_| |_| |______\\_/ \\__,_|_|\\__,_|\\__,_|\\__\\___/|_|\n");
+    printf("Ten en cuenta:\n\t-Balance de parentesis ('()' o '[]')\n\t-Balance de operadores (+,-,*,/)\n\t-Balance de operandos (Numeros enteros reales)\n");
 
-    //exp=cleanSpaces(exp);
-    printf("InFix: %s\n", exp);
+    char *exp=scanInput();
 
-    if(parenthesisBalance(exp) && invalidCharacters(exp) && operandsBalance(exp))
+    if(parenthesisBalance(exp) && invalidCharacters(exp) && operandsBalance(exp) && operatorsBalance(exp))
     {
-        EXP postfix=postFix(exp);
-        printf("PostFix: %s\n", postfix);
-        double * eval=postfixEval(postfix);
-        printf("Evaluation: %f\n", *eval);
+        //Add spaces efter and before operands to make sure we can idenify the numbers on posfix
+        printf("\tInfijo: [ %s]\n", exp);
+        EXP new=spacesBalance(exp);
+
+        //Expresión converted now to posfix form
+        EXP postfix=postFixV2(new);
+        printf("\tPosfijo: [%s]\n", postfix);
+        //Evaluate
+        EVAL eval=postfixEval(postfix);
+        printf("Evaluación: %f\n", *eval);
     }
-
-
 
 
 }
 
-//Returns the len including the null character and excluding spaces
-size_t strLen(EXP expresion)
+//Scans the input of the user as a str
+EXP scanInput()
 {
-    int i=0;
+    EXP inpt=NULL;
     size_t len=0;
-    while (expresion[i]!='\0')
+    printf("Ingresa tu expresión matemática: \n");
+
+    //scanf("%ms", &inpt);
+    getline(&inpt, &len, stdin);
+    for (size_t i = 0; i <= len; i++)
     {
-        if(expresion[i]!=' ')
+        if (inpt[i]=='\n')
         {
-            len++;
-            i++;
+            inpt[i]=' ';
         }
-        else
-        {
-            i++;
-        }
+        
     }
-    return len+1;
+
+    return inpt;
 }
 
-EXP cleanSpaces(EXP expresion)
-{
-    
-    size_t len=strLen(expresion);
-    EXP newEXP=calloc(len, sizeof(char));
-    newEXP[len]='\0';
-    int i=0, y=0;
-    while (expresion[i]!= '\0')
-    {
-        if(expresion[i]!=' ')
-        {
-            newEXP[y]=expresion[i];
-            i++;
-            y++;
-        }
-        else
-        {
-            i++;
-        }
-    }
-    return newEXP;
-   
-    
-}
-
+//Allocates space for a char
 EXP charCreate(char c)
 {
     EXP ptr=malloc(sizeof(char));
@@ -78,7 +76,8 @@ EXP charCreate(char c)
     return ptr;
 }
 
-double *doubleCreate(double d)
+//Allocates space for a double
+EVAL doubleCreate(double d)
 {
     double * ptr=malloc(sizeof(double));
     *ptr=d;
@@ -124,21 +123,38 @@ bool invalidCharacters(EXP expresion)
     int i=0;
     while (expresion[i]!='\0')
     {
-        if(expresion[i]>=65 && expresion[i]<=122)
+        if( (expresion[i]>='A' && expresion[i]<='Z') || (expresion[i]>='a' && expresion[i]<='z'))
         {
             printf("Caracter no soportado;[%c] recuerda no usar variables(x,y,z,....)\n", expresion[i]);
-            i=-1;
             return false;
         }
         i++;
     }
-    if(i!=-1)
-    {
-        return true;
-    }
+    return true;
     
 }
 
+//Chechs if given char is a valid operator
+bool isoperator(char c)
+{
+    switch (c)
+    {
+        case '+':
+                
+        case '-':
+                
+        case '*':
+                
+        case '/':
+            return true;
+            break;
+        default:
+            return false;
+            break;
+    }
+}
+
+//Checks the balance of numbers on each operator
 bool operandsBalance(EXP expresion)
 {
     int i=0;
@@ -148,23 +164,129 @@ bool operandsBalance(EXP expresion)
         if(expresion[i]==43 || expresion[i]==42 || expresion[i]==45 || expresion[i]==47)
         {
             //Check sides
-            if(expresion[i-1]=='(' || expresion[i+1] == ')' || expresion[i+1]=='\0' || i==0)
+            if(expresion[i-1]=='(' || expresion[i+1] == ')' || expresion[i+1]=='\0' || i==0 || expresion[i+1]=='\0')
             {
+                printf("Expresión no valida (operandos faltantes)\n");
                 return false;
             }
         }
+        
+
         i++;
     }
 
     return true;
 }
 
+//Checks the balance of operators between numbers
+bool operatorsBalance(EXP exp)
+{
+    int i=0;
+    while (exp[i]!='\0')
+    {
+        if (isdigit(exp[i]))
+        {
+            while (exp[i]!='\0')
+            {
+                if (isoperator(exp[i]))
+                {
+                    return true;
+                }
+                else if(exp[i]==' ')
+                {
+                    while (exp[i]!='\0')
+                    {
+                        if (isdigit(exp[i]))
+                        {
+                            printf("Expresión no válida (Falta de operador)\n");
+                            return false;
+                        }
+                        else if(isoperator(exp[i]))
+                        {
+                            return true;
+                        }
+                        i++;
+                        
+                    }
+                    
+                }
+                i++;
+                
+            }
+            
+        }
+        else
+        {
+            i++;
+        }
+    }
+    return false;
+    
+}
 
-EXP postFix(EXP expresion)
+EXP spacesBalance(EXP posfix)
+{
+    Queue q1=queueCreate(sizeof(char));
+
+    int i=0;
+    char space=' ';
+    while (posfix[i]!='\0')
+    {
+        if (posfix[i]== '+' || posfix[i]== '-' || posfix[i]== '*' || posfix[i]== '/' )
+        {
+            //Add space before operator
+            if (posfix[i-1]!=' ')
+            {
+                enqueue(q1, &space);
+            }
+
+            //Add operator to queue
+            enqueue(q1, &posfix[i]);
+
+            //Add space after operator
+            if (posfix[i+1]!=' ')
+            {
+                enqueue(q1, &space);
+            }
+            
+            
+        }
+        else
+        {
+            enqueue(q1, &posfix[i]);
+        }
+        i++;
+        
+    }
+
+    EXP new = posfixCreate(q1);
+    return new;
+    
+}
+
+short operatorDominance(char opt)
+{
+    switch (opt)
+    {
+    case '+':
+        
+    case '-':
+        return 1;
+    case '*':
+
+    case '/':
+        return 2;
+    default:
+        return 0;
+    }
+}
+
+EXP postFixV2(EXP expresion)
 {
     Stack stk=stack_create();
     Queue qe=queueCreate(sizeof(char)); 
     EXP result=calloc(1000, sizeof(char));
+    EXP temp=NULL;
 
     int i=0, newPos=0;
     while(expresion[i]!='\0')
@@ -173,96 +295,44 @@ EXP postFix(EXP expresion)
         if(expresion[i]>='0' && expresion[i]<='9')
         {
 
-            enqueue(qe, charCreate(expresion[i]));
-            result[newPos]=expresion[i];
-            newPos++;
+            enqueue(qe, (DATA) &expresion[i]);
             
         }
         //Add ( to stack
-        else if(expresion[i]=='(')
+        else if(expresion[i]=='(' || expresion[i]=='[')
         {
-            stack_push(stk, (DATA) charCreate(expresion[i]));
+            stack_push(stk, (DATA) charCreate(expresion[i]) );
         }
-        // operators of low dominance
-        else if(expresion[i]=='+' || expresion[i]=='-')
+        //Operators
+        else if (isoperator(expresion[i]))
         {
-            EXP dt= (EXP) stack_top(stk);
-            if(dt!=NULL){
-                if(*dt=='*' || *dt=='/')
-                {
-                    dt= (EXP) stack_pop(stk);
-                    enqueue(qe, charCreate(*dt));
-                    result[newPos]=*dt;
-                    newPos++;
-
-                    while (*dt != '(')
-                    {
-                        dt= (EXP) stack_top(stk);
-                        if(dt!=NULL){
-                            if(*dt=='(')
-                            {
-                                dt=stack_pop(stk);
-                                break;
-                            }
-                            else
-                            {
-                                dt=stack_pop(stk);
-                                enqueue(qe, charCreate(*dt));
-                                result[newPos]=*dt;
-                                newPos++;
-                            }
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                    
-                    stack_push(stk, (DATA) charCreate(expresion[i]));
-                    
-                }
-                else
-                {
-                    //printf("Adding opt to stack [%c]", expresion[i]);
-                    stack_push(stk, (DATA) charCreate(expresion[i]));
-                }
-            }
-            else
+            while (!stack_isEmpty(stk))
             {
-                //printf("Adding opt to stack [%c]", expresion[i]);
-                stack_push(stk, (DATA) charCreate(expresion[i]));
-            }
-        }
-        else if(expresion[i]=='*' || expresion[i]=='/')
-        {
-            EXP dt=(EXP) stack_top(stk);
-            if(dt!=NULL){
-                //Same level so swap
-                if (*dt=='*' || *dt=='/')
+                temp= (EXP) stack_top(stk);
+                //If '(' break the pops
+                if (*temp=='(' || operatorDominance(expresion[i])>operatorDominance(*temp))
                 {
-                    stack_pop(stk);
-                    enqueue(qe, charCreate(*dt));
-                    result[newPos]=*dt;
-                    newPos++;
-                    stack_push(stk, charCreate(expresion[i]));
+                    break;
                 }
-                else
+                //If operator in stack has higher or same dominance, pop and add to queue
+                else if (operatorDominance(expresion[i]) <= operatorDominance(*temp)  )
                 {
-                    stack_push(stk, (DATA) charCreate(expresion[i]));
+                    temp = stack_pop(stk);
+                    enqueue(qe, (DATA) temp);
                 }
             }
-            else
-            {
-                stack_push(stk, (DATA) charCreate(expresion[i]));
-            }
+            //Add operator to stack
+            stack_push(stk, charCreate(expresion[i]));
+            
         }
-        else if (expresion[i]==')')
+        //If closing parenthesis pop from stack and enqueue till it finds a closing parenthesis
+        else if (expresion[i]==')' || expresion[i]==']')
         {
             EXP dt=(EXP) stack_top(stk);
             while (!stack_isEmpty(stk))
             {
                 dt= (EXP)stack_top(stk);
-                if(*dt == '(')
+                if(*dt == '(' || *dt == '[')
                 {
                     dt=stack_pop(stk);
                     break;
@@ -270,40 +340,37 @@ EXP postFix(EXP expresion)
                 else
                 {
                     dt=(EXP) stack_pop(stk);
-                    enqueue(qe, charCreate(*dt));
-                    result[newPos]=*dt;
-                    newPos++;
+                    enqueue(qe, (DATA) dt);
                 }
             }
             
         }
+        //Add spaces and others that make it posible to track where the numbers end if they have more than one digit
         else
         {
-            EXP c=charCreate(expresion[i]);
-            enqueue(qe, c);
-            result[newPos]=*c;
-            newPos++;
+            enqueue(qe, &expresion[i]);
         }
         i++;
     }
 
-    //add remaining characters in the stack to the queue
+    // Add remaining characters in the stack to the queue
     EXP res=NULL;
     while (stack_isEmpty(stk)==false)
     {
         res= (EXP) stack_pop(stk);
         if(*res!='(')
         {
-            //printf("%c", *res);
             enqueue(qe, charCreate(*res));
-            result[newPos]=*res;
-            newPos++;
         }
     }
-    newPos++;
-    result[newPos]='\0';
+
+    //Transform the queue contaier to final expresion str and destroys the queue
+    EXP queueres= posfixCreate(qe);
     
-    return result;
+    //Destroy stack
+    stack_destroy(stk);
+
+    return queueres;
     
 }
 
@@ -314,24 +381,33 @@ EVAL postfixEval(EXP postfix)
     //Gracias a GeeksForGeeks, estabamos perdidisimos en esto y su explicacion nos ayudo a entender el como crear el numero de mas de un digito
     while (postfix[i]!='\0')
     {
-
         if(isdigit(postfix[i]))
         {
-            double number=0;
+            
+            double number=0; 
+            int index=0;
+            //Max space for 10 digits
+            char *temp=calloc(10, sizeof(char));
+
             while (isdigit(postfix[i]))
             {
-                //Esto no se nos hubiera ocurrido la verdad :p
-                number = number*10 + (double)(postfix[i]- '0');
+                temp[index]=postfix[i]; 
                 i++;
+                index++;            
             }
             i--;
+            temp[index+1]='\0';
+            //Atoi takes a string of digits and turns it into a usable number
+            number=atoi(temp);
             stack_push(stk, doubleCreate(number));
         }
         else if(postfix[i]== '+' || postfix[i]== '-' || postfix[i]== '*' || postfix[i]== '/')
         {
+            //Pop two numbers of the stack
             double *val1= (double *)stack_pop(stk);
             double *val2= (double *)stack_pop(stk);
 
+            //Operate and push the result back to stack
             switch (postfix[i])
             {
             case '+':
@@ -357,5 +433,18 @@ EVAL postfixEval(EXP postfix)
 
 EXP posfixCreate(Queue q1)
 {
-
+    
+    int size=queueSize(q1), indx=0;
+    char * new=calloc(size+1, sizeof(char));
+    char *add=NULL;
+    while (!queueEmpty(q1))
+    {
+        add= (char *) dequeue(q1);
+        new[indx]=*add;
+        indx++;
+    }
+    new[indx+1]='\0';
+    queueDestroy(q1);
+    return new;
+    
 }

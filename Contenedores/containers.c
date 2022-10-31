@@ -37,28 +37,51 @@ Stack stack_create(size_t bytes)
 
 int stack_size(Stack stk)
 {
-    return stk->size;
+    if (stk!=NULL)
+    {
+        return stk->size;
+    }
+    else
+    {
+        return -1;
+    }
+    
 }
 
 bool stack_isEmpty(Stack stk)
 {
-    if(stk->top==NULL)
+    if (stk != NULL)
     {
-        return true;
+        if(stk->top==NULL)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     else
     {
-        return false;
+        return true;
     }
+    
 }
 
 DATA stack_top(Stack stk)
 {
-    if(stk->top!=NULL && stk!=NULL)
+    if (stk!=NULL)
     {
-        return stk->top->data;
+        if(stk->top!=NULL)
+        {
+            return stk->top->data;
+        }
+        else 
+        {
+            return NULL;
+        }
     }
-    else 
+    else
     {
         return NULL;
     }
@@ -89,15 +112,22 @@ void stack_push(Stack stk, DATA data)
 
 DATA stack_pop(Stack stk)
 {
-    if(stk->top!=NULL && stk!=NULL)
+    if(stk!=NULL)
     {
-        void *dataTemp=stk->top->data;
+        if(stk->top!=NULL)
+        {
+            void *dataTemp=stk->top->data;
 
-        NodePS new_top=stk->top->prior;
-        free(stk->top);
-        stk->top=new_top;
-        stk->size--;
-        return dataTemp;
+            NodePS new_top=stk->top->prior;
+            free(stk->top);
+            stk->top=new_top;
+            stk->size--;
+            return dataTemp;
+        }
+        else
+        {
+            return NULL;
+        }
     }
     else
     {
@@ -110,23 +140,26 @@ void stack_destroy(Stack stk)
 
     // Destroy nodes
 
-    if(stk->top!=NULL || stk->size!=0)
+    if (stk!=NULL)
     {
-        for(int i=0; i<stk->size; i++)
+        if(stk->top!=NULL && stk->size!=0)
         {
-            // Save next node to destroy
-            if(stk->top!=NULL)
+            for(int i=0; i<stk->size; i++)
             {
-                NodePS next_node=stk->top->prior;
-                //Destroy one at the top
-                free(stk->top);
-                //Make new top
-                stk->top=next_node;
+                // Save next node to destroy
+                if(stk->top!=NULL)
+                {
+                    NodePS next_node=stk->top->prior;
+                    //Destroy one at the top
+                    free(stk->top);
+                    //Make new top
+                    stk->top=next_node;
+                }
             }
         }
+        //Delete stack
+        free(stk);
     }
-    //Delete stack
-    free(stk);
 }
 
 
@@ -181,7 +214,7 @@ bool queueEmpty(Queue q1)
 {
     if(q1!=NULL)
     {
-        if(q1->size==0)
+        if(q1->size==0 && q1->first==NULL)
         {
             return true;
         }
@@ -233,38 +266,55 @@ void enqueue(Queue q, DATA data)
 
 DATA peek(Queue q)
 {
-    if(q!=NULL && queueEmpty(q))
+    if (q!=NULL)
     {
-        return q->first->data;
+        if( !queueEmpty(q))
+        {
+            return q->first->data;
+        }
+        else
+        {
+            return NULL;
+        }
     }
     else
     {
         return NULL;
     }
+    
 }
 
 DATA dequeue(Queue q)
 {
-    if(q!=NULL && queueEmpty(q))
+    if (q!=NULL)
     {
-        NodePQ ret=q->first;
-        DATA temp=ret->data;
-        
-        if(ret->next!=NULL){
-            q->first=ret->next;
+        if(!queueEmpty(q))
+        {
+            NodePQ ret=q->first;
+            DATA temp=ret->data;
+            
+            if(ret->next!=NULL){
+                q->first=ret->next;
 
+            }
+            else
+            {
+                q->first=NULL;
+            }
+            free(ret);
+            q->size--;
+            return temp;
         }
         else
         {
-            q->first=NULL;
+            return NULL;
         }
-        free(ret);
-        return temp;
     }
     else
     {
         return NULL;
     }
+    
 }
 
 void queueDestroy(Queue q)
@@ -277,6 +327,6 @@ void queueDestroy(Queue q)
             temp=dequeue(q);
             free(temp);
         }
-        
+        free(q);
     }
 }
