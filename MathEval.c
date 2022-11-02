@@ -27,14 +27,27 @@ EXP scanInput()
 
     //scanf("%ms", &inpt);
     getline(&inpt, &len, stdin);
-    for (size_t i = 0; i <= len; i++)
+
+    /*for (size_t i = 0; i <= len; i++)
     {
-        if (inpt[i]=='\n')
+        if (inpt[i]==' ')
         {
             inpt[i]=' ';
         }
         
+    }*/
+
+    for (size_t i = 0; i <= len; i++)
+    {
+        if (inpt[i]=='\n')
+        {
+            //Cambie el espacio por finalizador de cadena
+            //Casos como (1+2)* , 3/5+ ya los marca como erroneos
+            inpt[i]='\0';
+        }
+        
     }
+
     return inpt;
 }
 
@@ -256,7 +269,7 @@ short operatorDominance(char opt)
 EXP postFix()
 {
 
-    system("clear");
+    system("cls");
     printf("  __  __       _   _       ______          _             _             \n"
             " |  \\/  |     | | | |     |  ____|        | |           | |\n"            
             " | \\  / | __ _| |_| |__   | |____   ____ _| |_   _  __ _| |_ ___  _ __\n" 
