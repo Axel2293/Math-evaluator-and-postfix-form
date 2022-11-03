@@ -1,11 +1,11 @@
 #include "MathEval.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <Windows.h>
+//#include <Windows.h>
 
 int main()
 {
-    system("cls");
+    system("clear");
 
     EXP postfix=postFix();
     

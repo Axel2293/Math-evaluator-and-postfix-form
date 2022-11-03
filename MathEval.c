@@ -42,22 +42,6 @@ EXP scanInput()
     return inpt;
 }
 
-//Allocates space for a char
-EXP charCreate(char c)
-{
-    EXP ptr=malloc(sizeof(char));
-    *ptr=c;
-    return ptr;
-}
-
-//Allocates space for a double
-EVAL doubleCreate(double d)
-{
-    double * ptr=malloc(sizeof(double));
-    *ptr=d;
-    return ptr;
-}
-
 //Returns true if balace is correct
 bool parenthesisBalance(EXP expresion)
 {
@@ -207,6 +191,7 @@ bool operatorsBalance(EXP exp)
     
 }
 
+//Spaces are fundamental for keeping a track of the numbers as they are digists and not variables
 EXP spacesBalance(EXP posfix)
 {
     Queue q1=queueCreate(sizeof(char));
@@ -366,7 +351,7 @@ EXP postFix()
         res= (EXP) stack_pop(stk);
         if(*res!='(')
         {
-            enqueue(qe, charCreate(*res));
+            enqueue(qe, res);
         }
     }
 
