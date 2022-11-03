@@ -439,7 +439,9 @@ EVAL postfixEval(EXP postfix)
         }
         i++;
     }
-    return (double *)stack_pop(stk);
+    EVAL result=stack_pop(stk);
+    stack_destroy(stk);
+    return result;
 }
 
 // Takes the queue and constructs the final expresion on an string of the exact size
