@@ -25,17 +25,8 @@ EXP scanInput()
     size_t len=0;
     printf("Ingresa tu expresión matemática: \n");
 
-    //scanf("%ms", &inpt);
+    //Scans in blocks of 4 bytes
     getline(&inpt, &len, stdin);
-
-    /*for (size_t i = 0; i <= len; i++)
-    {
-        if (inpt[i]==' ')
-        {
-            inpt[i]=' ';
-        }
-        
-    }*/
 
     for (size_t i = 0; i <= len; i++)
     {
@@ -148,12 +139,20 @@ bool operandsBalance(EXP expresion)
         // Found +,-,/,*
         if(expresion[i]==43 || expresion[i]==42 || expresion[i]==45 || expresion[i]==47)
         {
+            printf("Val: %c ,%c, %c\n",expresion[i+1],expresion[i],expresion[i-1]);
             //Check sides
             if(expresion[i-1]=='(' || expresion[i+1] == ')' || expresion[i+1]=='\0' || i==0 || expresion[i+1]=='\0')
             {
                 printf("Expresión no valida (operandos faltantes)\n");
                 return false;
             }
+            else if (isoperator(expresion[i+1]) == true)
+            {
+                printf("Expresión no valida (dos operadores juntos encontrados)\n");
+                return false;
+            }
+            
+            
         }
         
 
