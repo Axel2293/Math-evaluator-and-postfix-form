@@ -74,7 +74,9 @@ DATA stack_top(Stack stk)
     {
         if(stk->top!=NULL)
         {
-            return stk->top->data;
+            DATA ret=malloc(stk->bytes);
+            memcpy(ret, stk->top->data, stk->bytes);
+            return ret;
         }
         else 
         {
@@ -87,10 +89,11 @@ DATA stack_top(Stack stk)
     }
 }
 
-NodePS newNode(DATA data)
+NodePS newNode(DATA data, size_t bytes)
 {
     NodePS new= malloc(sizeof(struct nodeSTK));
-    new->data=data;
+    new->data=malloc(bytes);
+    memcpy(new->data, data, bytes);
     new->prior=NULL;
     return new;
 }
@@ -99,7 +102,7 @@ void stack_push(Stack stk, DATA data)
 {
     if(stk!=NULL)
     {
-        NodePS nd=newNode(data);
+        NodePS nd=newNode(data, stk->bytes);
         stk->size++;
         nd->prior=stk->top;
         stk->top=nd;
@@ -151,7 +154,9 @@ void stack_destroy(Stack stk)
                 {
                     NodePS next_node=stk->top->prior;
                     //Destroy one at the top
+                    free(stk->top->data);
                     free(stk->top);
+
                     //Make new top
                     stk->top=next_node;
                 }

@@ -1,11 +1,11 @@
 #include "MathEval.h"
 #include <stdio.h>
 #include <stdlib.h>
-//#include <Windows.h>
+#include <Windows.h>
 
 int main()
 {
-    system("clear");
+    system("cls");
 
     EXP postfix=postFix();
     
@@ -13,7 +13,7 @@ int main()
     {
         printf("\tPostfijo [%s]\n", postfix);
         EVAL result=postfixEval(postfix);
-        printf("\tEvaluación: [%f]\n", *result);
+        printf("\tEvaluacion: [%f]\n", *result);
     }
 
     return 0;

@@ -21,13 +21,15 @@ bool operatorsBalance(EXP);
 //Scans the input of the user as a str
 EXP scanInput()
 {
-    EXP inpt=NULL;
+    EXP inpt=malloc(1000000 * sizeof(char));
+    //EXP inpt=NULL;
     size_t len=0;
     printf("Ingresa tu expresión matemática: \n");
 
-    //Scans in blocks of 4 bytes
-    getline(&inpt, &len, stdin);
-
+    //Scans in blocks of 4 bytes from standard input> stdin
+    //getline(&inpt, &len, stdin);
+    len=strlen(inpt);
+    fgets(inpt, 1000000, stdin);
     for (size_t i = 0; i <= len; i++)
     {
         if (inpt[i]=='\n')
@@ -61,7 +63,7 @@ EVAL doubleCreate(double d)
 //Returns true if balace is correct
 bool parenthesisBalance(EXP expresion)
 {
-    Stack stk=stack_create();
+    Stack stk=stack_create(sizeof(char));
 
     int i=0;
     while(expresion[i]!='\0')
@@ -139,7 +141,6 @@ bool operandsBalance(EXP expresion)
         // Found +,-,/,*
         if(expresion[i]==43 || expresion[i]==42 || expresion[i]==45 || expresion[i]==47)
         {
-            printf("Val: %c ,%c, %c\n",expresion[i+1],expresion[i],expresion[i-1]);
             //Check sides
             if(expresion[i-1]=='(' || expresion[i+1] == ')' || expresion[i+1]=='\0' || i==0 || expresion[i+1]=='\0')
             {
@@ -279,6 +280,7 @@ EXP postFix()
 
     EXP exp=scanInput();
 
+    // validate invalid expresions (invalid characters, parenthesis balance, operands balance, operators balance)
     if (!parenthesisBalance(exp) || !invalidCharacters(exp) || !operandsBalance(exp) || !operatorsBalance(exp))
     {
         return NULL;
@@ -289,7 +291,7 @@ EXP postFix()
 
 
 
-    Stack stk=stack_create();
+    Stack stk=stack_create(sizeof(char));
     Queue qe=queueCreate(sizeof(char)); 
     EXP result=calloc(1000, sizeof(char));
     EXP temp=NULL;
@@ -307,7 +309,7 @@ EXP postFix()
         //Add ( to stack
         else if(expresion[i]=='(' || expresion[i]=='[')
         {
-            stack_push(stk, (DATA) charCreate(expresion[i]) );
+            stack_push(stk, (DATA) &expresion[i] );
         }
         //Operators
         else if (isoperator(expresion[i]))
@@ -328,7 +330,7 @@ EXP postFix()
                 }
             }
             //Add operator to stack
-            stack_push(stk, charCreate(expresion[i]));
+            stack_push(stk, &expresion[i]);
             
         }
         //If closing parenthesis pop from stack and enqueue till it finds a closing parenthesis
@@ -361,7 +363,7 @@ EXP postFix()
 
     // Add remaining characters in the stack to the queue
     EXP res=NULL;
-    while (stack_isEmpty(stk)==false)
+    while (!stack_isEmpty(stk))
     {
         res= (EXP) stack_pop(stk);
         if(*res!='(')
@@ -380,53 +382,73 @@ EXP postFix()
     
 }
 
+//Adds an aditional space on the string
+EXP resizeStr(EXP old, int size)
+{
+    //Reserve space with one more space
+    EXP new=malloc(sizeof(char)*(size+1));
+
+    memcpy(new, old, size);
+    free(old);
+    return new;
+}
+
 EVAL postfixEval(EXP postfix)
 {
     int i=0;
-    Stack stk=stack_create();
+    Stack stk=stack_create(sizeof(double));
     while (postfix[i]!='\0')
     {
         if(isdigit(postfix[i]))
         {
             
+            //Construct the numbers with more than one digit, spaces are really important
             double number=0; 
             int index=0;
+
             //Max space for 10 digits
-            char *temp=calloc(10, sizeof(char));
+            char *temp=malloc(sizeof(char));
 
             while (isdigit(postfix[i]))
             {
                 temp[index]=postfix[i]; 
                 i++;
-                index++;            
+                index++;
+                temp=resizeStr(temp, index);          
             }
             i--;
+            temp=resizeStr(temp, index);
             temp[index+1]='\0';
-            //Atoi takes a string of digits and turns it into a usable number
+            //Atoi takes a string of digits and turns it into a usable int number
             number=atoi(temp);
             
-            stack_push(stk, doubleCreate(number));
+            stack_push(stk, &number);
         }
+        // If operator found then pop two numbers from the stack and operate
         else if(postfix[i]== '+' || postfix[i]== '-' || postfix[i]== '*' || postfix[i]== '/')
         {
             //Pop two numbers of the stack
+            double result=0;
             double *val1= (double *)stack_pop(stk);
             double *val2= (double *)stack_pop(stk);
-
             //Operate and push the result back to stack
             switch (postfix[i])
             {
             case '+':
-                stack_push(stk, doubleCreate((*val2 + *val1)));
+                result=*val2 + *val1;
+                stack_push(stk, &result);
                 break;
             case '-':
-                stack_push(stk, doubleCreate((*val2 - *val1)));
+                result=*val2 - *val1;
+                stack_push(stk, &result);
                 break;
             case '*':
-                stack_push(stk, doubleCreate((*val2 * *val1)));
+                result=*val2 * *val1;
+                stack_push(stk, &result);
                 break;
             case '/':
-                stack_push(stk, doubleCreate((*val2 / *val1)));
+                result=*val2 / *val1;
+                stack_push(stk, &result);
                 break;
             default:
                 break;
@@ -437,6 +459,7 @@ EVAL postfixEval(EXP postfix)
     return (double *)stack_pop(stk);
 }
 
+// Takes the queue and constructs the final expresion on an string of the exact size
 EXP posfixCreate(Queue q1)
 {
     

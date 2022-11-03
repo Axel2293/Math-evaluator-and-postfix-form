@@ -11,7 +11,7 @@ typedef void * DATA;
     //Pointer to the stack container
 typedef struct stack * Stack;
 
-Stack stack_create();
+Stack stack_create(size_t);
 int stack_size(Stack);
 bool stack_isEmpty(Stack);
 DATA stack_top(Stack);
