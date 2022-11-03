@@ -21,15 +21,13 @@ bool operatorsBalance(EXP);
 //Scans the input of the user as a str
 EXP scanInput()
 {
-    EXP inpt=malloc(1000000 * sizeof(char));
-    //EXP inpt=NULL;
+    EXP inpt=NULL;
     size_t len=0;
     printf("Ingresa tu expresión matemática: \n");
 
     //Scans in blocks of 4 bytes from standard input> stdin
-    //getline(&inpt, &len, stdin);
-    len=strlen(inpt);
-    fgets(inpt, 1000000, stdin);
+    getline(&inpt, &len, stdin);
+
     for (size_t i = 0; i <= len; i++)
     {
         if (inpt[i]=='\n')
