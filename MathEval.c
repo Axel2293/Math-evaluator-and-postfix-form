@@ -11,6 +11,7 @@ EXP postFix();
 EVAL postfixEval(EXP);
 EXP spacesBalance(EXP);
 EXP scanInput();
+EXP resizeStr(EXP , int );
 bool parenthesisBalance(EXP );
 bool invalidCharacters(EXP );
 bool operandsBalance(EXP );
@@ -155,11 +156,7 @@ bool operatorsBalance(EXP exp)
         {
             while (exp[i]!='\0')
             {
-                if (isoperator(exp[i]))
-                {
-                    return true;
-                }
-                else if(exp[i]==' ')
+                if(exp[i]==' ')
                 {
                     while (exp[i]!='\0')
                     {
@@ -168,26 +165,19 @@ bool operatorsBalance(EXP exp)
                             printf("Expresión no válida (Falta de operador)\n");
                             return false;
                         }
-                        else if(isoperator(exp[i]))
-                        {
-                            return true;
-                        }
                         i++;
                         
-                    }
-                    
+                    } 
                 }
-                i++;
-                
-            }
-            
+                i++;  
+            } 
         }
         else
         {
             i++;
         }
     }
-    return false;
+    return true;
     
 }
 
@@ -261,7 +251,32 @@ EXP postFix()
             " |_|  |_|\\__,_|\\__|_| |_| |______\\_/ \\__,_|_|\\__,_|\\__,_|\\__\\___/|_|\n");
     printf("Ten en cuenta:\n\t-Balance de parentesis ('()' o '[]')\n\t-Balance de operadores (+,-,*,/)\n\t-Balance de operandos (Numeros enteros)\n");
 
+
+    //Clean spaces for initial validations
     EXP exp=scanInput();
+    //Verify operators balance before cleaning spaces
+    if (!operatorsBalance(exp))
+    {
+        return NULL;
+    }
+
+    EXP new=malloc(sizeof(char));
+    int k=0, indx=0;
+    while (exp[k]!='\0')
+    {
+        if (exp[k]!=' ')
+        {
+            new[indx]=exp[k];
+            indx++;
+            new =resizeStr(new, indx);
+        }
+        k++;
+    }
+    new=resizeStr(new, indx);
+    new[indx]='\0';
+    exp=new;
+
+    
 
     // validate invalid expresions (invalid characters, parenthesis balance, operands balance, operators balance)
     if (!parenthesisBalance(exp) || !invalidCharacters(exp) || !operandsBalance(exp) || !operatorsBalance(exp))
