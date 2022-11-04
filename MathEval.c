@@ -5,7 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
-//#include <windows.h>
+#include <windows.h>
 
 EXP posfixCreate(Queue);
 EXP postFix(EXP);
@@ -82,7 +82,6 @@ EVAL MathEval()
     return NULL;
 
 }
-
 //Scans the input of the user as a str
 EXP scanInput()
 {
@@ -106,7 +105,6 @@ EXP scanInput()
 
     return inpt;
 }
-
 //Returns true if balace is correct
 bool parenthesisBalance(EXP expresion)
 {
@@ -141,7 +139,6 @@ bool parenthesisBalance(EXP expresion)
     }
 
 }
-
 //Returns true if no invalid characters are found
 bool invalidCharacters(EXP expresion)
 {
@@ -158,7 +155,6 @@ bool invalidCharacters(EXP expresion)
     return true;
     
 }
-
 //Chechs if given char is a valid operator
 bool isoperator(char c)
 {
@@ -178,7 +174,6 @@ bool isoperator(char c)
             break;
     }
 }
-
 //Checks the balance of numbers on each operator
 bool operandsBalance(EXP expresion)
 {
@@ -209,7 +204,6 @@ bool operandsBalance(EXP expresion)
 
     return true;
 }
-
 //Checks the balance of operators between numbers
 bool operatorsBalance(EXP exp)
 {
@@ -244,7 +238,6 @@ bool operatorsBalance(EXP exp)
     return true;
     
 }
-
 //Spaces are fundamental for keeping a track of the numbers as they are digists and not variables
 EXP spacesBalance(EXP posfix)
 {
@@ -302,7 +295,7 @@ short operatorDominance(char opt)
         return 0;
     }
 }
-
+//Converts a infix expresion to postfix using Shunting Yard Algorithm, stack and queue
 EXP postFix(EXP expresion)
 {
     Stack stk=stack_create(sizeof(char));
@@ -395,7 +388,6 @@ EXP postFix(EXP expresion)
     return queueres;
     
 }
-
 //Adds an aditional space on the string
 EXP resizeStr(EXP old, int size)
 {
@@ -406,7 +398,7 @@ EXP resizeStr(EXP old, int size)
     free(old);
     return new;
 }
-
+//Evaluates a postfix expresion using stack
 EVAL postfixEval(EXP postfix)
 {
     int i=0;
@@ -474,7 +466,6 @@ EVAL postfixEval(EXP postfix)
     stack_destroy(stk);
     return result;
 }
-
 // Takes the queue and constructs the final expresion on an string of the exact size
 EXP posfixCreate(Queue q1)
 {
