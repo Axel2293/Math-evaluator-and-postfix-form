@@ -5,10 +5,10 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include <windows.h>
+//#include <windows.h>
 
 EXP posfixCreate(Queue);
-EXP postFix();
+EXP postFix(EXP);
 EVAL postfixEval(EXP);
 EXP spacesBalance(EXP);
 EXP scanInput();
@@ -20,7 +20,7 @@ bool operatorsBalance(EXP);
 
 EVAL MathEval()
 {
-    system("cls");
+    system("clear");
     printf("  __  __       _   _       ______          _             _             \n"
             " |  \\/  |     | | | |     |  ____|        | |           | |\n"            
             " | \\  / | __ _| |_| |__   | |____   ____ _| |_   _  __ _| |_ ___  _ __\n" 
