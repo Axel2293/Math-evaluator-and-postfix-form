@@ -2,10 +2,10 @@
 Takes a math expresión and turns it into postfix form, also evaluates the result.
 
 ### Operators
-- /+
-- /-
-- /*
-- /
+-  +
+-  -
+-  *
+-  /
 
 ### Operands
 - Does not support the use of variables (x, y .....) (Just a proyect requirement, but deleting a verifaction it could work)
