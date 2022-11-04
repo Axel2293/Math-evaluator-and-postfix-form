@@ -5,7 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include <windows.h>
+//#include <windows.h>
 
 EXP posfixCreate(Queue);
 EXP postFix(EXP);
@@ -184,7 +184,7 @@ bool operandsBalance(EXP expresion)
         if(expresion[i]==43 || expresion[i]==42 || expresion[i]==45 || expresion[i]==47)
         {
             //Check sides
-            if(expresion[i-1]=='(' || expresion[i+1] == ')' || expresion[i+1]=='\0' || i==0 || expresion[i+1]=='\0')
+            if(expresion[i-1]=='(' || expresion[i-1]=='['|| expresion[i+1] == ')' || expresion[i+1] == ']'|| expresion[i+1]=='\0' || i==0 || expresion[i+1]=='\0')
             {
                 printf("Expresión no valida (operandos faltantes)\n");
                 return false;
@@ -412,7 +412,6 @@ EVAL postfixEval(EXP postfix)
             double number=0; 
             int index=0;
 
-            //Max space for 10 digits
             char *temp=malloc(sizeof(char));
 
             while (isdigit(postfix[i]))
