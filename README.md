@@ -13,5 +13,5 @@ Takes a math expresión and turns it into postfix form, also evaluates the resul
 
 ### Parenthesis
 - Suports the use of parenthesis and [] symbols
-- 
+
 
