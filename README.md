@@ -2,9 +2,9 @@
 Takes a math expresión and turns it into postfix form, also evaluates the result.
 
 ### Operators
-- +
-- -
-- *
+- /+
+- /-
+- /*
 - /
 
 ### Operands
