@@ -5,6 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <windows.h>
 
 EXP posfixCreate(Queue);
 EXP postFix();
@@ -17,7 +18,70 @@ bool invalidCharacters(EXP );
 bool operandsBalance(EXP );
 bool operatorsBalance(EXP);
 
+EVAL MathEval()
+{
+    system("cls");
+    printf("  __  __       _   _       ______          _             _             \n"
+            " |  \\/  |     | | | |     |  ____|        | |           | |\n"            
+            " | \\  / | __ _| |_| |__   | |____   ____ _| |_   _  __ _| |_ ___  _ __\n" 
+            " | |\\/| |/ _` | __| '_ \\  |  __\\ \\ / / _` | | | | |/ _` | __/ _ \\| '__|\n"
+            " | |  | | (_| | |_| | | | | |___\\ V / (_| | | |_| | (_| | || (_) | |\n"
+            " |_|  |_|\\__,_|\\__|_| |_| |______\\_/ \\__,_|_|\\__,_|\\__,_|\\__\\___/|_|\n");
+    printf("Ten en cuenta:\n\t-Balance de parentesis ('()' o '[]')\n\t-Balance de operadores (+,-,*,/)\n\t-Balance de operandos (Numeros enteros)\n");
 
+
+    //Clean spaces for initial validations
+    EXP exp=scanInput();
+    //Verify operators balance before cleaning spaces
+    if (!operatorsBalance(exp))
+    {
+        return NULL;
+    }
+
+    //Delete spaces of the user
+    EXP new=malloc(sizeof(char));
+    int k=0, indx=0;
+    while (exp[k]!='\0')
+    {
+        if (exp[k]!=' ')
+        {
+            new[indx]=exp[k];
+            indx++;
+            new =resizeStr(new, indx);
+        }
+        k++;
+    }
+    new=resizeStr(new, indx);
+    new[indx]='\0';
+    exp=new;
+
+    
+
+    // validate invalid expresions (invalid characters, parenthesis balance, operands balance, operators balance)
+    if (!parenthesisBalance(exp) || !invalidCharacters(exp) || !operandsBalance(exp) || !operatorsBalance(exp))
+    {
+        return NULL;
+    }
+    
+    //Add spaces after and before operators so we can separete numbers of more than one digit
+    EXP expresion=spacesBalance(exp);
+
+
+    //COnverto to postfix
+    EXP postfix=postFix(expresion);
+
+    //Evaluate
+     if (postfix!=NULL)
+    {
+        printf("\tPostfijo [%s]\n", postfix);
+        EVAL result=postfixEval(postfix);
+        printf("\tEvaluacion: [%f]\n", *result);
+        return result;
+    }
+
+    return NULL;
+
+}
 
 //Scans the input of the user as a str
 EXP scanInput()
@@ -239,56 +303,8 @@ short operatorDominance(char opt)
     }
 }
 
-EXP postFix()
+EXP postFix(EXP expresion)
 {
-
-    system("cls");
-    printf("  __  __       _   _       ______          _             _             \n"
-            " |  \\/  |     | | | |     |  ____|        | |           | |\n"            
-            " | \\  / | __ _| |_| |__   | |____   ____ _| |_   _  __ _| |_ ___  _ __\n" 
-            " | |\\/| |/ _` | __| '_ \\  |  __\\ \\ / / _` | | | | |/ _` | __/ _ \\| '__|\n"
-            " | |  | | (_| | |_| | | | | |___\\ V / (_| | | |_| | (_| | || (_) | |\n"
-            " |_|  |_|\\__,_|\\__|_| |_| |______\\_/ \\__,_|_|\\__,_|\\__,_|\\__\\___/|_|\n");
-    printf("Ten en cuenta:\n\t-Balance de parentesis ('()' o '[]')\n\t-Balance de operadores (+,-,*,/)\n\t-Balance de operandos (Numeros enteros)\n");
-
-
-    //Clean spaces for initial validations
-    EXP exp=scanInput();
-    //Verify operators balance before cleaning spaces
-    if (!operatorsBalance(exp))
-    {
-        return NULL;
-    }
-
-    EXP new=malloc(sizeof(char));
-    int k=0, indx=0;
-    while (exp[k]!='\0')
-    {
-        if (exp[k]!=' ')
-        {
-            new[indx]=exp[k];
-            indx++;
-            new =resizeStr(new, indx);
-        }
-        k++;
-    }
-    new=resizeStr(new, indx);
-    new[indx]='\0';
-    exp=new;
-
-    
-
-    // validate invalid expresions (invalid characters, parenthesis balance, operands balance, operators balance)
-    if (!parenthesisBalance(exp) || !invalidCharacters(exp) || !operandsBalance(exp) || !operatorsBalance(exp))
-    {
-        return NULL;
-    }
-    
-    EXP expresion=spacesBalance(exp);
-    
-
-
-
     Stack stk=stack_create(sizeof(char));
     Queue qe=queueCreate(sizeof(char)); 
     EXP result=calloc(1000, sizeof(char));
