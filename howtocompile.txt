@@ -5,4 +5,4 @@ gcc -c MathEval.c Contenedores/containers.c
 
 Generate the main using the MathEval TDA
 
-gcc main.c MathEval.o containers.o -o test.exe
+gcc main.c Object\ Files/MathEval.o Object\ Files/containers.o -o mac.exec
